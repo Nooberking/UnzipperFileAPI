@@ -17,6 +17,7 @@ FROM build AS publish
 RUN dotnet publish "UnzipperFileAPI.csproj" -c Release -o /app/publish
 
 FROM base AS final
+VOLUME /media
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "UnzipperFileAPI.dll"]

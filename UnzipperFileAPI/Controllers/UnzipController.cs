@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using UnzipperFileAPI.Models;
 
 namespace UnzipperFileAPI.Controllers
 {
@@ -17,9 +18,14 @@ namespace UnzipperFileAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveZipFile(IFormFile file)
         {
-            var filePath = Path.GetTempFileName();
 
-            using (var stream = System.IO.File.Create(filePath))
+            string randomizedName = Path.GetTempFileName().Split("/tmp/")[1].Replace(".tmp", "");
+
+            string fileTitle = HttpContext.Request.Headers.ContainsKey("FileTitle") ? HttpContext.Request.Headers["FileTitle"] : randomizedName;
+
+            string destFile = $"/media/source/{fileTitle}.zip";
+
+            using (var stream = System.IO.File.Create(destFile))
             {
                 await file.CopyToAsync(stream);
             }
