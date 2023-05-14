@@ -10,9 +10,7 @@ namespace UnzipperFileAPI.Controllers
     {
         private readonly ILogger<UnzipController> _logger;
 
-        private readonly IUnzipService _unzipService; 
-
-        private readonly string _destinationFolder = "/media/source/";
+        private readonly IUnzipService _unzipService;
 
         public UnzipController(ILogger<UnzipController> logger, IUnzipService unzipService)
         {
@@ -23,28 +21,12 @@ namespace UnzipperFileAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveZipFile(IFormFile file)
         {
-       
-            string fileName = HttpContext.Request.Headers.ContainsKey("FileTitle") ? HttpContext.Request.Headers["FileTitle"] : GetRandomizedName(Path.GetTempFileName());
-
-            string destFile = GetDestinationFilePath(fileName);
-
-            using (var stream = System.IO.File.Create(destFile))
-            {
-                Console.WriteLine(destFile);
-                await file.CopyToAsync(stream);
-            }
+            string fileName = HttpContext.Request.Headers.ContainsKey("FileTitle") ? 
+                HttpContext.Request.Headers["FileTitle"] : 
+                _unzipService.ExtractRandomizedName(Path.GetTempFileName());
+            await _unzipService.SaveZipFile(fileName, file); 
             return Ok();
-           
-            
-        }
-        private string GetRandomizedName(string tempFileName)
-        {
-            return tempFileName.Split("/tmp/")[1].Replace(".tmp", "");
-        }
-
-        private string GetDestinationFilePath (string fileName)
-        {
-            return $"{_destinationFolder}{fileName}.zip";
+                       
         }
 
         [HttpGet]
