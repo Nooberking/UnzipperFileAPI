@@ -5,6 +5,7 @@ namespace UnzipperFileAPI.Services
     public class UnzipService : IUnzipService
     {
         private readonly string _destinationFolder = "/media/source/";
+        private readonly string _extractionFolder = @"../media/extractedTemp"; 
       
        
 
@@ -30,7 +31,7 @@ namespace UnzipperFileAPI.Services
 
         public Task UnzipFile(string zipPath)
         {
-            ZipFile.ExtractToDirectory(zipPath, @"./temp", true);
+            ZipFile.ExtractToDirectory(zipPath, _extractionFolder, true);
             return Task.CompletedTask;
         }
 
